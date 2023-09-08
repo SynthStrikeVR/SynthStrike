@@ -500,7 +500,7 @@ InputManager:
     invert: 0
     type: 2
     axis: 1
-    joyNum: 0
+    joyNum: 2
   - serializedVersion: 3
     m_Name: XRI_Left_Primary2DAxis_Horizontal
     descriptiveName: Device joystick/touchpad horizontal motion

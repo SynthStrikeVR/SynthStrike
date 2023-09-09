@@ -3,5 +3,11 @@ using System;
 [Serializable]
 public class MapNote
 {
-    private float timestamp { get; set; }
+    public ulong timestamp { get; set; }
+    public bool visible { get; set; } = false;
+
+    public MapNote(ulong timestamp)
+    {
+        this.timestamp = timestamp;
+    }
 }

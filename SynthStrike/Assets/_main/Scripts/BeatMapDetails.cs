@@ -1,10 +1,12 @@
 using System;
+using System.Collections.Generic;
 
 [Serializable]
 public class BeatMapDetails
 {
-    private string title { get; set; }
-    private string author { get; set; }
-    private string beatMapAuthor { get; set; }
-    [field: NonSerialized] private string path { get; set; }
+    public string title;
+    public string author;
+    public string beatMapAuthor;
+    public List<string> difficulties = new();
+    [field: NonSerialized] public string path { get; set; }
 }

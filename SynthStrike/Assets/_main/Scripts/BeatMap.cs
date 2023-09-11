@@ -4,5 +4,5 @@ using System.Collections.Generic;
 [Serializable]
 public class BeatMap
 {
-    public List<List<MapNote>> beatMapNotes { get; set; }
+    public List<List<MapNote>> beatMapNotes;
 }

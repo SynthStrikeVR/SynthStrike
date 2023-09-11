@@ -1,12 +1,15 @@
 using System;
+using UnityEngine;
 
 [Serializable]
 public class MapNote
 {
-    public ulong timestamp { get; set; }
-    public bool visible { get; set; } = false;
+    public long timestamp;
+    [field: NonSerialized] public bool visible { get; set; }
+    [field: NonSerialized] public bool destroyed { get; set; }
+    [field: NonSerialized] public GameObject notePrefab { get; set; }
 
-    public MapNote(ulong timestamp)
+    public MapNote(long timestamp)
     {
         this.timestamp = timestamp;
     }

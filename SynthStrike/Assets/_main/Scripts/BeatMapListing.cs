@@ -8,6 +8,7 @@ using UnityEngine.XR;
 
 public class BeatMapListing : MonoBehaviour
 {
+    [SerializeField] private Gameplay _gameplay;
     [SerializeField] private BeatMapListLoader beatMapListLoader;
     [SerializeField] private TMP_Text selectedBeatMapLabel;
     private BeatMapDetails _selectedBeatMap;
@@ -78,16 +79,16 @@ public class BeatMapListing : MonoBehaviour
 
     private void SelectMap(int direction)
     {
-        if (direction == -1)
-        {
-            generatedTextFields[selectedMapIndex - 1].fontSize = 36;
-        }
-        else if (direction == 1)
+        /*if (direction == -1 && selectedMapIndex > 0)
         {
             generatedTextFields[selectedMapIndex + 1].fontSize = 36;
         }
+        else if (direction == 1 && selectedMapIndex < beatMapListLoader.beatMaps.Count - 1)
+        {
+            generatedTextFields[selectedMapIndex - 1].fontSize = 36;
+        }
 
-        generatedTextFields[selectedMapIndex].fontSize = 42;
+        generatedTextFields[selectedMapIndex].fontSize = 42;*/
 
         _selectedBeatMap = beatMapListLoader.beatMaps[selectedMapIndex];
         string text = $"Author: {_selectedBeatMap.author}\n" +
@@ -207,7 +208,6 @@ public class BeatMapListing : MonoBehaviour
             var vertical = Input.GetAxis("XRI_Right_Primary2DAxis_Vertical");
 
             var horizontal = Input.GetAxis("XRI_Right_Primary2DAxis_Horizontal");
-            Debug.Log("hor" + horizontal + " ver" + vertical);
             if (vertical >= 0.9)
             {
                 ChangeMap(true);
@@ -234,6 +234,10 @@ public class BeatMapListing : MonoBehaviour
                 }
             }
 
+            if (Input.GetButton("XRI_Right_TriggerButton"))
+            {
+                _gameplay.Initialize(_selectedBeatMap, _selectedBeatMapDifficulty);
+            }
             _menuDelay = 0;
         }
     }

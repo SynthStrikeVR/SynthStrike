@@ -23,25 +23,23 @@ public class Gameplay : MonoBehaviour
         this.currentlyPlayingBeatMap = currentlyPlayingBeatMap;
     }
 
-    void Initialize(BeatMap beatMap, BeatMapDetails details)
+    public void Initialize(BeatMapDetails details, string difficulty)
     {
-        currentlyPlayingBeatMap = beatMap;
+        Debug.Log(details.path);
+        currentlyPlayingBeatMap =  JsonUtility.FromJson<BeatMap>(
+            File.ReadAllText(  details.path + "/"+ difficulty +".json"));
         _audioSource = GetComponent<AudioSource>();
-        _audioClip = Resources.Load<AudioClip>("BeatMaps/Touhou - Bad Apple!!/track");
+        _audioClip = Resources.Load<AudioClip>(details.path.Remove(0, 23) + "/track");
         _audioClip.LoadAudioData();
         _audioSource.clip = _audioClip;
         _playbackDelay = 5f;
+        isPlaying = true;
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        Initialize(null, null);
-        currentlyPlayingBeatMap =
-            JsonUtility.FromJson<BeatMap>(
-                File.ReadAllText("Assets/_main/Resources/BeatMaps/Touhou - Bad Apple!!/default.json"));
         _currentTime = 0;
-        isPlaying = true;
     }
 
     public void ClickAButton(int buttonNo)
@@ -95,6 +93,11 @@ public class Gameplay : MonoBehaviour
     // Update is called once per frame
     private void FixedUpdate()
     {
+        if (_audioSource == null)
+        {
+            return;
+        }
+        
         if (isPlaying)
         {
             if (_playbackDelay > 0)

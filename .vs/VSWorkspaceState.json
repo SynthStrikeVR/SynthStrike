@@ -1,11 +1,7 @@
 {
   "ExpandedNodes": [
-    "",
-    "\\SynthStrike",
-    "\\SynthStrike\\Assets",
-    "\\SynthStrike\\Assets\\_main",
-    "\\SynthStrike\\Assets\\_main\\Scripts"
+    ""
   ],
-  "SelectedNode": "\\SynthStrike\\Assets\\_main\\Scripts\\Beatmap.cs",
+  "SelectedNode": "\\SynthStrike.sln",
   "PreviewInSolutionExplorer": false
 }

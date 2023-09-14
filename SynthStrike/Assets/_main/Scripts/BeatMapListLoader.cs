@@ -12,7 +12,6 @@ public class BeatMapListLoader : MonoBehaviour
         string[] beatMapsPaths = Directory.GetDirectories("Assets/_main/Resources/BeatMaps");
         foreach (var beatMapPath in beatMapsPaths)
         {
-            Debug.Log(beatMapPath);
             var beatMapDetails = JsonUtility.FromJson<BeatMapDetails>(File.ReadAllText(beatMapPath + "/details.json"));
             beatMapDetails.path = beatMapPath;
             beatMaps.Add(beatMapDetails);

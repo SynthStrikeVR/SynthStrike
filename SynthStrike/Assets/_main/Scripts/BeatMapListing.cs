@@ -15,104 +15,146 @@ public class BeatMapListing : MonoBehaviour
 
     [SerializeField] private TMP_Text textPrefab; // Przypisz prefab TextMeshPro do tego pola w inspektorze.
     [SerializeField] private Canvas canvas;
-    //[SerializeField] private Scrollbar scrollbar;
 
     private List<TMP_Text> generatedTextFields = new(); // Tablica do przechowywania utworzonych pól tekstowych
     private int selectedMapIndex = 0;
     private int selectedDifficultyIndex = 0;
-    
-    
     private float _menuDelay = 0;
-    
+
+    [SerializeField] private TMP_Text textEasy;
+    [SerializeField] private TMP_Text textMedium;
+    [SerializeField] private TMP_Text textHard;
+
+
     // Start is called before the first frame update
     void Start()
     {
         beatMapListLoader.LoadBeatMaps();
-        // _selectedBeatMap = beatMapListLoader.beatMaps[selectedMapIndex];
-        // selectedBeatMapLabel.text = _selectedBeatMap.author + " - " + _selectedBeatMap.title + "(" +
-        //                               _selectedBeatMap.beatMapAuthor + ")";
-        SelectMap();
-        SelectDifficulty();
-        //_selectedBeatMapDifficulty = _selectedBeatMap.difficulties[selectedDifficultyIndex];
 
         var y = 265;
-        var textWidth = 1000; // Nowa szerokość pola tekstowego
+        var textWidth = 620; // Nowa szerokość pola tekstowego
 
         if (textPrefab != null && canvas != null)
         {
-            // Pobierz komponent ScrollRect
-            ScrollRect scrollRect = canvas.GetComponentInChildren<ScrollRect>();
-
-            if (scrollRect != null)
+            foreach (var beatMapDetails in beatMapListLoader.beatMaps)
             {
-                // Pobierz RectTransform obszaru treści
-                RectTransform contentRect = scrollRect.content;
+                // Tworzenie nowego obiektu TMP_Text przy użyciu Instantiate.
+                TMP_Text newText = Instantiate(textPrefab, Vector3.zero, Quaternion.identity);
 
-                // Usuń wszystkie dzieci z obszaru treści
-                foreach (Transform child in contentRect)
+                newText.name = "Text - " + beatMapDetails.title;
+                foreach (Transform child in newText.transform)
                 {
                     Destroy(child.gameObject);
                 }
-                
-                foreach (var beatMapDetails in beatMapListLoader.beatMaps)
-                {
-                    // Tworzenie nowego obiektu TMP_Text przy użyciu Instantiate.
-                    TMP_Text newText = Instantiate(textPrefab, Vector3.zero, Quaternion.identity);
 
-                    newText.name = "Text - " + beatMapDetails.title;
-                    foreach (Transform child in newText.transform)
-                    {
-                         Destroy(child.gameObject);
-                    }
-                    // Ustaw pozycję tekstu w obrębie obszaru treści
-                    newText.rectTransform.SetParent(contentRect, false);
-                    newText.rectTransform.anchoredPosition = new Vector2(-380, y);
+                // Ustaw pozycję tekstu w obrębie obszaru treści
+                newText.rectTransform.position = new Vector3(-420, y, 0);
 
-                    // Ustaw szerokość pola tekstowego na textWidth pikseli
-                    newText.rectTransform.sizeDelta = new Vector2(textWidth, newText.rectTransform.sizeDelta.y);
+                newText.rectTransform.SetParent(canvas.transform, false);
 
-                    // Ustaw tekst, czcionkę i inne właściwości tekstu według potrzeb.
-                    newText.text = beatMapDetails.title + " - " + beatMapDetails.author;
-                    newText.fontSize = 70;
+                // Ustaw szerokość pola tekstowego na textWidth pikseli
+                newText.rectTransform.sizeDelta = new Vector2(textWidth, newText.rectTransform.sizeDelta.y);
 
-                    //wyłącz pole
-                    //newText.enabled = false;
-                    
-                    // Dodaj utworzone pole tekstowe do listy
-                    generatedTextFields.Add(newText);
+                // Ustaw tekst, czcionkę i inne właściwości tekstu według potrzeb.
+                newText.text = beatMapDetails.title + " - " + beatMapDetails.author;
+                //newText.fontSize = 35;
 
-                    // Zmiana pozycji kolejnego tekstu
-                    y -= 75;
-                    Debug.Log("Utworzono obiekt: " + newText.name + " na pozycji (" + newText.rectTransform.anchoredPosition.x + ", " + newText.rectTransform.anchoredPosition.y + ")");
-                }
-                
+                //wyłącz pole
+                //newText.enabled = false;
+
+                // Dodaj utworzone pole tekstowe do listy
+                generatedTextFields.Add(newText);
+
+                // Zmiana pozycji kolejnego tekstu
+                y -= 45;
+                Debug.Log("Utworzono obiekt: " + newText.name + " na pozycji (" +
+                          newText.rectTransform.anchoredPosition.x + ", " + newText.rectTransform.anchoredPosition.y +
+                          ")");
             }
         }
-        
-        
+
+        SelectMap(0);
     }
 
-    private void SelectMap()
+    private void SelectMap(int direction)
     {
-        // for (int i = selectedMapIndex - 2; i <= selectedMapIndex + 2; i++)
-        // {
-        //     if (i >= 0 && i < generatedTextFields.Count)
-        //     {
-        //         generatedTextFields[i].enabled = true;
-        //     }
-        // }
-    
+        if (direction == -1)
+        {
+            generatedTextFields[selectedMapIndex - 1].fontSize = 36;
+        }
+        else if (direction == 1)
+        {
+            generatedTextFields[selectedMapIndex + 1].fontSize = 36;
+        }
+
+        generatedTextFields[selectedMapIndex].fontSize = 42;
 
         _selectedBeatMap = beatMapListLoader.beatMaps[selectedMapIndex];
-        selectedBeatMapLabel.text = _selectedBeatMap.author + " - " + _selectedBeatMap.title + "(" +
-                                    _selectedBeatMap.beatMapAuthor + ")";
+        string text = $"Author: {_selectedBeatMap.author}\n" +
+                      $"Title: {_selectedBeatMap.title}\n" +
+                      $"BeatMap Author: {_selectedBeatMap.beatMapAuthor}\n" +
+                      $"Difficulties:";
+
+        
+        selectedBeatMapLabel.text = text;
+
+        SelectDifficulty(-1);
+        selectedDifficultyIndex = 0;
+
+        //_selectedBeatMap.author + " - " + _selectedBeatMap.title + "(" +
+        //                      _selectedBeatMap.beatMapAuthor + ")";
     }
 
-    private void SelectDifficulty()
+    private void SelectDifficulty(int direction)
     {
+        
+
+        if (_selectedBeatMap.difficulties.Count > 0)
+        {
+            textEasy.text = "Easy";
+        }
+
+        if (_selectedBeatMap.difficulties.Count > 1)
+        {
+            textMedium.text = "Medium";
+        }
+
+        if (_selectedBeatMap.difficulties.Count > 2)
+        {
+            textHard.text = "Hard";
+        }
+
+        switch (selectedDifficultyIndex)
+        {
+            case 0:
+                textEasy.color = Color.green;
+                break;
+            case 1:
+                textMedium.color = Color.green;
+                break;
+            case 2:
+                textHard.color = Color.green;
+                break;
+                
+        }
+        
+        switch (direction)
+        {
+            case 0:
+                textEasy.color = Color.white;
+                break;
+            case 1:
+                textMedium.color = Color.white;
+                break;
+            case 2:
+                textHard.color = Color.white;
+                break;
+                
+        }
+        
         _selectedBeatMapDifficulty = _selectedBeatMap.difficulties[selectedDifficultyIndex];
     }
-    
+
     private void ChangeMap(bool direction) // true - UP, false - DOWN
     {
         if (direction)
@@ -120,6 +162,7 @@ public class BeatMapListing : MonoBehaviour
             if (selectedMapIndex != 0)
             {
                 selectedMapIndex--;
+                SelectMap(-1);
             }
         }
         else
@@ -127,11 +170,9 @@ public class BeatMapListing : MonoBehaviour
             if (selectedMapIndex != generatedTextFields.Count - 1)
             {
                 selectedMapIndex++;
+                SelectMap(1);
             }
         }
-
-        SelectMap();
-
     }
 
     private void ChangeDifficulty(bool direction) // true - Left, false - Right
@@ -141,6 +182,8 @@ public class BeatMapListing : MonoBehaviour
             if (selectedDifficultyIndex != 0)
             {
                 selectedDifficultyIndex--;
+                SelectDifficulty(selectedDifficultyIndex+1);
+
             }
         }
         else
@@ -148,12 +191,12 @@ public class BeatMapListing : MonoBehaviour
             if (selectedDifficultyIndex != _selectedBeatMap.difficulties.Count - 1)
             {
                 selectedDifficultyIndex++;
+                SelectDifficulty(selectedDifficultyIndex-1);
             }
         }
-        
-        SelectDifficulty();
+
     }
-    
+
 
     // Update is called once per frame
     void FixedUpdate()
@@ -162,7 +205,7 @@ public class BeatMapListing : MonoBehaviour
         if (_menuDelay > 0.3)
         {
             var vertical = Input.GetAxis("XRI_Right_Primary2DAxis_Vertical");
-    
+
             var horizontal = Input.GetAxis("XRI_Right_Primary2DAxis_Horizontal");
             Debug.Log("hor" + horizontal + " ver" + vertical);
             if (vertical >= 0.9)
@@ -190,9 +233,8 @@ public class BeatMapListing : MonoBehaviour
                     }
                 }
             }
-            
+
             _menuDelay = 0;
         }
     }
 }
-
